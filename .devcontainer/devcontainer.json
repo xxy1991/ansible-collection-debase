@@ -1,0 +1,22 @@
+{
+  "name": "Python 3",
+  "image": "mcr.microsoft.com/devcontainers/python:latest",
+  "mounts": [
+    "type=volume,source=${localWorkspaceFolderBasename}-cache,target=${containerWorkspaceFolder}/.venv"
+  ],
+  "postCreateCommand": {
+    "venv1": "sudo chown 1000 .venv",
+    "venv2": "python -m venv .venv"
+  },
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/ansible:2": {
+      "version": "latest"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {},
+      "extensions": ["esbenp.prettier-vscode"]
+    }
+  }
+}
