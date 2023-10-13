@@ -1,0 +1,8 @@
+---
+# HashiCorp default options
+default:
+  hashicorp:
+    install:
+      packer: false
+      vagrant: false
+      terraform: false

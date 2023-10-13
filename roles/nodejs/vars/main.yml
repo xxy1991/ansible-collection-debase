@@ -1,0 +1,10 @@
+---
+# Node.js options:
+# version options:
+# 12 for 12.x
+# 14 for 14.x (LTS)
+# 16 for 16.x (current)
+# lts for 14.x
+# current for 16.x
+nodejs:
+  version: "{{ nodejs_version | default(default.nodejs.version) }}"

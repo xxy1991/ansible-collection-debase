@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars:
+    software_google_chrome: true
+    software_scooter_bcompare: true
+  roles:
+    - role: debase

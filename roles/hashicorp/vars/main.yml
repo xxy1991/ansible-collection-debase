@@ -1,0 +1,7 @@
+---
+# HashiCorp options
+hashicorp:
+  install:
+    packer: "{{ hashicorp_install_packer | default(default.hashicorp.install.packer) }}"
+    vagrant: "{{ hashicorp_install_vagrant | default(default.hashicorp.install.vagrant) }}"
+    terraform: "{{ hashicorp_install_terraform | default(default.hashicorp.install.terraform) }}"

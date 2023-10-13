@@ -1,0 +1,6 @@
+---
+- name: Verify file exist
+  ansible.builtin.stat:
+    path: /etc/apt/apt.conf.d/20auto-upgrades
+  register: auto_upgrades
+  failed_when: not auto_upgrades.stat.exists

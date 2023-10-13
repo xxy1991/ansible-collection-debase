@@ -1,0 +1,11 @@
+---
+# RealVNC default options:
+default:
+  realvnc:
+    version: 6.7.4
+    license: ""
+    x11:
+      enabled: false
+    virtual:
+      enabled: false
+      use_system_xorg: true

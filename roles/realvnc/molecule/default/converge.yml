@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars:
+    realvnc_x11_enabled: true
+    realvnc_virtual_enabled: true
+  roles:
+    - role: realvnc

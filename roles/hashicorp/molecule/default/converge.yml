@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars:
+    hashicorp_install_packer: true
+    hashicorp_install_vagrant: true
+    hashicorp_install_terraform: true
+  roles:
+    - role: hashicorp

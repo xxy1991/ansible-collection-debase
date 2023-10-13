@@ -1,0 +1,13 @@
+---
+# Docker default options:
+default:
+  docker:
+    install_compose: false
+    # install_compose_version: "v2.4.1"
+    install_compose_version: "1.29.2"
+    install_compose_arch: x86_64
+    # install_compose_path: /usr/libexec/docker/cli-plugins
+    install_compose_path: /usr/local/bin/docker-compose
+    use_buildx: true
+    # A list of users who will be added to the docker group.
+    docker_users: []

@@ -1,0 +1,10 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Verify rustup had installed
+      ansible.builtin.command: command -v rustup >/dev/null 2>&1
+      register: rust_exists
+      changed_when: false
+      ignore_errors: true
+      check_mode: true

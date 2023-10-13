@@ -1,0 +1,30 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  vars:
+    software_google_chrome: true
+    software_scooter_bcompare: true
+  tasks:
+    - name: Verify file exist
+      ansible.builtin.stat:
+        path: /etc/modprobe.d/blacklist-floppy.conf
+      register: blacklist_floppy
+      failed_when: not blacklist_floppy.stat.exists
+
+    - name: Verify file exist
+      ansible.builtin.stat:
+        path: /etc/modules-load.d/cc-bbr.conf
+      register: cc_bbr
+      failed_when: not cc_bbr.stat.exists
+
+    - name: Verify file exist
+      ansible.builtin.stat:
+        path: /etc/sysctl.d/99-cc-bbr.conf
+      register: cc_bbr
+      failed_when: not cc_bbr.stat.exists
+
+    - include_tasks: tasks/verify-apt.yml
+    - include_tasks: tasks/verify-sysctl.yml
+    - include_tasks: tasks/verify-chrome.yml
+    - include_tasks: tasks/verify-bcompare.yml

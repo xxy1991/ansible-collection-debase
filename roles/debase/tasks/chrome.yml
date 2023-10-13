@@ -1,0 +1,82 @@
+---
+- name: Check system
+  assert:
+    that: ansible_distribution == 'Debian'
+      or ansible_distribution == 'Ubuntu'
+
+- name: check pub key
+  ansible.builtin.stat:
+    path: /etc/apt/trusted.gpg.d/google.asc
+    checksum_algorithm: sha256
+  register: google_pub_key
+  when: software.google.chrome
+
+- name: Add google pub key
+  ansible.builtin.get_url:
+    url: "https://dl.google.com/linux/linux_signing_key.pub"
+    dest: /etc/apt/trusted.gpg.d/google.asc
+    mode: 0644
+    owner: root
+    group: root
+  when: software.google.chrome
+    and not google_pub_key.stat.exists
+  register: google_import_pub_key
+  retries: 3
+  delay: 3
+  until: google_import_pub_key is succeeded
+
+- name: check sources list
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list.d/google-chrome.list
+    checksum_algorithm: sha256
+  register: chrome_src_list
+  when: software.google.chrome
+    and google_import_pub_key is succeeded
+
+- name: "Add chrome repository into sources list"
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64] \
+           http://dl.google.com/linux/chrome/deb/ stable main"
+    state: present
+    filename: google-chrome
+  when: software.google.chrome
+    and google_import_pub_key is succeeded
+    and not chrome_src_list.stat.exists
+  register: chrome_add_repository
+
+- name: "Install google chrome stable"
+  ansible.builtin.package:
+    name: google-chrome-stable
+    state: present
+  when: software.google.chrome
+    and chrome_add_repository is succeeded
+    and chrome_add_repository is not skipped
+  register: chrome_installed
+  retries: 3
+  delay: 3
+  until: chrome_installed is succeeded
+
+- name: Verify chrome repository list
+  include_tasks: chrome-verify.yml
+  when: chrome_installed is succeeded
+    and chrome_installed is not skipped
+
+- name: Verify chrome repository list
+  include_tasks: chrome-verify.yml
+  when: chrome_installed is succeeded
+    and chrome_installed is not skipped
+
+- name: Verify chrome repository list
+  include_tasks: chrome-verify.yml
+  when: chrome_installed is succeeded
+    and chrome_installed is not skipped
+
+- name: Verify chrome repository list
+  include_tasks: chrome-verify.yml
+  when: chrome_installed is succeeded
+    and chrome_installed is not skipped
+
+- name: Verify chrome repository list
+  include_tasks: chrome-verify.yml
+  when: chrome_installed is succeeded
+    and chrome_installed is not skipped

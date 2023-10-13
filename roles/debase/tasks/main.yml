@@ -1,0 +1,42 @@
+---
+# tasks file for ansible-role
+
+- name: Check system
+  assert:
+    that: ansible_distribution == 'Debian'
+      or ansible_distribution == 'Ubuntu'
+
+- name: "Check modprobe directory"
+  ansible.builtin.file:
+    path: /etc/modprobe.d
+    state: directory
+    mode: 0755
+
+- name: "Configure modprobe blacklist-floppy"
+  ansible.builtin.copy:
+    src: files/etc/modprobe.d/blacklist-floppy.conf
+    dest: /etc/modprobe.d/blacklist-floppy.conf
+    mode: 0644
+  when: modprobe.blacklist_floppy
+
+- name: "Configure modules-load(congestion control)"
+  ansible.builtin.template:
+    src: templates/etc/modules-load.d/cc.conf.j2
+    dest: /etc/modules-load.d/cc-{{ item.name }}.conf
+    mode: 0644
+  with_list: "{{ modules.load.cc }}"
+  when: modules.load.cc | length > 0
+
+- name: "Configure net.ipv4.tcp_congestion_control"
+  vars:
+    tcp_congestion_control: "{{ net.ipv4.tcp_congestion_control }}"
+  ansible.builtin.template:
+    src: templates/etc/sysctl.d/99-cc.conf.j2
+    dest: /etc/sysctl.d/99-cc-{{ net.ipv4.tcp_congestion_control }}.conf
+    mode: 0644
+  when: net.ipv4.tcp_congestion_control | length > 0
+
+- include_tasks: apt.yml
+- include_tasks: sysctl.yml
+- include_tasks: chrome.yml
+- include_tasks: bcompare.yml

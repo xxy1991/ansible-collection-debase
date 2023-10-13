@@ -1,0 +1,19 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  vars:
+    realvnc_x11_enabled: true
+    realvnc_virtual_enabled: true
+  tasks:
+    - name: Verify server package
+      ansible.builtin.package:
+        name: realvnc-vnc-server
+        state: present
+      check_mode: true
+
+    - name: Verify dummy package
+      ansible.builtin.package:
+        name: xserver-xorg-video-dummy
+        state: present
+      check_mode: true

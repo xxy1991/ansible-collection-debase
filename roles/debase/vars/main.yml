@@ -1,0 +1,34 @@
+---
+# apt settings
+apt:
+  auto_upgrade: "{{ apt_auto_upgrade | default(default.apt.auto_upgrade) }}"
+# modprobe settings
+modprobe:
+  # blacklist-floppy
+  blacklist_floppy: "{{ modprobe_blacklist_floppy | default(default.modprobe.blacklist_floppy) }}"
+
+# modules-load settings
+modules:
+  load:
+    # congestion control
+    cc: "{{ modules_load_cc | default(default.modules.load.cc) }}"
+
+# sysctl settings
+# fs.inotify.max_user_watches
+fs:
+  inotify:
+    max_user_watches: "{{ fs_inotify_max_user_watches | default(default.fs.inotify.max_user_watches) }}"
+
+# net.ipv4.tcp_congestion_control
+net:
+  ipv4:
+    tcp_congestion_control: "{{ net_ipv4_tcp_congestion_control | default(default.net.ipv4.tcp_congestion_control) }}"
+
+# install softwares
+software:
+  google:
+    # install chrome
+    chrome: "{{ software_google_chrome | default(default.software.google.chrome) }}"
+  scooter:
+    # install bcompare
+    bcompare: "{{ software_scooter_bcompare | default(default.software.scooter.bcompare) }}"

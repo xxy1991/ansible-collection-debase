@@ -1,0 +1,62 @@
+---
+# tasks file for ansible-role
+
+- name: Check system
+  assert:
+    that: ansible_distribution == 'Debian'
+      or ansible_distribution == 'Ubuntu'
+
+- name: "Install RealVNC by remote package"
+  ansible.builtin.apt:
+    deb: "https://www.realvnc.com/download/file/vnc.files/VNC-Server-{{ realvnc.version }}-Linux-x64.deb"
+    state: present
+    update_cache: true
+  register: realvnc_installed
+  retries: 3
+  delay: 3
+  until: realvnc_installed is succeeded
+
+- name: "Check license"
+  ansible.builtin.command: "vnclicense -check"
+  register: realvnc_registered
+  when: realvnc_installed is succeeded
+  changed_when: false
+  ignore_errors: true
+
+- name: "Register RealVNC"
+  ansible.builtin.command: "vnclicense -add {{ realvnc.license }}"
+  when: "realvnc_installed is succeeded \
+    and realvnc_registered is failed \
+    and (realvnc.license | length > 0)"
+
+- name: "Configure x11 service"
+  ansible.builtin.service:
+    name: vncserver-x11-serviced
+    enabled: "{{ realvnc.x11.enabled }}"
+  when: realvnc_installed is succeeded
+
+- name: "Configure virtual service"
+  ansible.builtin.service:
+    name: vncserver-virtuald
+    enabled: "{{ realvnc.virtual.enabled }}"
+  when: realvnc_installed is succeeded
+
+- name: "Install xserver-xorg-video-dummy"
+  ansible.builtin.package:
+    name: xserver-xorg-video-dummy
+    state: present
+  register: installed_xorg_video_dummy
+  retries: 3
+  delay: 3
+  until: "realvnc_installed is succeeded \
+    and realvnc.virtual.enabled"
+
+- name: "Use system Xorg"
+  vars:
+    use_system_xorg: "{{ '1' if realvnc.virtual.use_system_xorg else '0' }}"
+  ansible.builtin.template:
+    src: templates/etc/vnc/config.d/vncserver-virtual.j2
+    dest: /etc/vnc/config.d/vncserver-virtual
+    mode: 0644
+  when: realvnc_installed is succeeded and
+    realvnc.virtual.use_system_xorg | type_debug == "bool"

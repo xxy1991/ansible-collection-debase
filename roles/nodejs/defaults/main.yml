@@ -1,0 +1,5 @@
+---
+# Node.js default options:
+default:
+  nodejs:
+    version: lts

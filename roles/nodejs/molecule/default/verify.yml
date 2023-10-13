@@ -1,0 +1,26 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Verify apt key
+      ansible.builtin.stat:
+        path: /etc/apt/trusted.gpg.d/nodesource.asc
+        checksum_algorithm: sha256
+      register: apt_key
+      failed_when: "apt_key.stat.checksum != \
+        '773b328f7b1d6db58a8c6a7fc89e2ed58ac5e06c3ab148411cf8272be7b1c472'"
+
+    - name: Verify apt repository
+      ansible.builtin.stat:
+        path: /etc/apt/sources.list.d/nodesource.list
+        checksum_algorithm: sha256
+      register: apt_repository
+      failed_when: "apt_repository.stat.checksum != \
+        'cde5e3d96d8adc9b07019dceb3854c99797eb5f6dfd667915e0de1e5bb164919'"
+
+    - name: Verify package
+      ansible.builtin.package:
+        name: nodejs
+        state: present
+      check_mode: true

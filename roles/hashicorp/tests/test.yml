@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  remote_user: root
+  vars:
+    hashicorp_install_packer: true
+    hashicorp_install_vagrant: true
+    hashicorp_install_terraform: true
+  roles:
+    - hashicorp

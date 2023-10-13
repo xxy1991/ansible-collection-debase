@@ -1,0 +1,49 @@
+---
+# tasks file for ansible-role
+
+- name: Check system
+  assert:
+    that: ansible_distribution == 'Debian'
+      or ansible_distribution == 'Ubuntu'
+
+- name: "Add the nodesource key"
+  get_url:
+    url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    dest: /etc/apt/trusted.gpg.d/nodesource.asc
+    mode: 0644
+    owner: root
+    group: root
+  register: nodesource_import_key
+  retries: 3
+  delay: 3
+  until: nodesource_import_key is succeeded
+
+- name: "Add nodesource repository into sources list"
+  ansible.builtin.apt_repository:
+    repo: "{{ item }}"
+    state: present
+    filename: nodesource
+  with_list:
+    - "deb [signed-by=/etc/apt/trusted.gpg.d/nodesource.asc] \
+       https://deb.nodesource.com/node_\
+       {{ '14' if nodejs.version == 'lts' else '16' if nodejs.version == 'current' else nodejs.version }}.x \
+       {{ ansible_distribution_release }} main"
+    - "deb-src [signed-by=/etc/apt/trusted.gpg.d/nodesource.asc] \
+       https://deb.nodesource.com/node_\
+       {{ '14' if nodejs.version == 'lts' else '16' if nodejs.version == 'current' else nodejs.version }}.x \
+       {{ ansible_distribution_release }} main"
+  register: nodesource_add_repository
+  when: nodesource_import_key is succeeded
+  retries: 3
+  delay: 3
+  until: nodesource_add_repository is succeeded
+
+- name: "Install Node.js"
+  ansible.builtin.package:
+    name: nodejs
+    state: present
+  register: nodejs_installed
+  when: nodesource_add_repository is succeeded
+  retries: 3
+  delay: 3
+  until: nodejs_installed is succeeded

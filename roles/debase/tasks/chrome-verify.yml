@@ -1,0 +1,14 @@
+---
+- name: checksum
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list.d/google-chrome.list
+    checksum_algorithm: sha256
+  register: apt_repository
+
+- name: replace space
+  ansible.builtin.replace:
+    path: /etc/apt/sources.list.d/google-chrome.list
+    regexp: '(#\s*#\s*#)'
+    replace: '###'
+  when: "apt_repository.stat.checksum != \
+    '585b940fa7eea7bf7f84c7f105dc4e936a8715672fc796d7348f2cd2c3e4e026'"

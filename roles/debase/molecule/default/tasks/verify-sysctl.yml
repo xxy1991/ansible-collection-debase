@@ -1,0 +1,6 @@
+---
+- name: Verify file exist
+  ansible.builtin.stat:
+    path: /etc/sysctl.d/99-fs-watches.conf
+  register: fs_watches
+  failed_when: not fs_watches.stat.exists

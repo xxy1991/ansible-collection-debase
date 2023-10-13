@@ -1,0 +1,11 @@
+---
+extends: default
+
+ignore: |
+  .venv/
+  .github/
+
+rules:
+  line-length:
+    max: 200
+    level: warning

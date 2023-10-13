@@ -1,0 +1,24 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Verify apt key
+      ansible.builtin.stat:
+        path: /etc/apt/trusted.gpg.d/anaconda.asc
+        checksum_algorithm: sha256
+      register: apt_key
+      failed_when: "apt_key.stat.checksum != \
+        '611cec7b3e7e43a94b33d60b4b5f7c828a688ef3087fa754dcd790a1a162925e'"
+    - name: Verify apt repository
+      ansible.builtin.stat:
+        path: /etc/apt/sources.list.d/anaconda.list
+        checksum_algorithm: sha256
+      register: apt_repository
+      failed_when: "apt_repository.stat.checksum != \
+        'd4e5fd686333ea13d83e16f9ebff127039fed5566d01def2e36781524acf129b'"
+    - name: Verify package
+      ansible.builtin.package:
+        name: conda
+        state: present
+      check_mode: true

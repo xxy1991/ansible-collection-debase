@@ -1,0 +1,10 @@
+---
+# RealVNC options:
+realvnc:
+  version: "{{ realvnc_version | default(default.realvnc.version) }}"
+  license: "{{ realvnc_license | default(default.realvnc.license) }}"
+  x11:
+    enabled: "{{ realvnc_x11_enabled | default(default.realvnc.x11.enabled) }}"
+  virtual:
+    enabled: "{{ realvnc_virtual_enabled | default(default.realvnc.virtual.enabled) }}"
+    use_system_xorg: "{{ realvnc_virtual_use_system_xorg | default(default.realvnc.virtual.use_system_xorg) }}"

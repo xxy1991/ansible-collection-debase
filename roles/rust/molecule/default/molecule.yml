@@ -1,0 +1,23 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: "molecule-${MOLECULE_DISTRO:-debian}-rust"
+    image: "xxy1991/${MOLECULE_DISTRO:-debian}:ansible"
+    command_handling: correct
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    entrypoint: ${MOLECULE_DOCKER_ENTRYPOINT:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
+scenario:
+  name: default
+verifier:
+  name: ansible

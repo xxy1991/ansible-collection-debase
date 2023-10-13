@@ -1,0 +1,37 @@
+---
+default:
+  # apt settings
+  apt:
+    auto_upgrade: true
+  # modprobe settings
+  modprobe:
+    # blacklist-floppy
+    blacklist_floppy: true
+
+  # modules-load settings
+  modules:
+    load:
+      # congestion control
+      cc:
+        - name: bbr
+          value: tcp_bbr
+
+  # sysctl settings
+  # fs.inotify.max_user_watches
+  fs:
+    inotify:
+      max_user_watches: 524288
+
+  # net.ipv4.tcp_congestion_control
+  net:
+    ipv4:
+      tcp_congestion_control: bbr
+
+  # install softwares
+  software:
+    google:
+      # install chrome
+      chrome: false
+    scooter:
+      # install bcompare
+      bcompare: false

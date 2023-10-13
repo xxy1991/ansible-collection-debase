@@ -1,0 +1,37 @@
+---
+# tasks file for ansible-role
+
+- name: Check system
+  assert:
+    that: ansible_distribution == 'Debian'
+      or ansible_distribution == 'Ubuntu'
+
+- name: Check is rustup installed
+  ansible.builtin.command: bash -ilc 'which rustup'
+  register: rust_exists
+  changed_when: false
+  ignore_errors: true
+
+- name: Download rustup script
+  ansible.builtin.get_url:
+    url: https://sh.rustup.rs
+    dest: /tmp/rustup-init.sh
+    mode: u+x
+  register: rust_downloaded
+  when: rust_exists is not succeeded
+
+- name: Install rustup
+  ansible.builtin.command:
+    argv:
+      - /tmp/rustup-init.sh
+      - -y
+  register: rust_installed
+  when: rust_exists is not succeeded
+    and rust_downloaded is succeeded
+
+- name: Remove rustup script
+  ansible.builtin.file:
+    path: /tmp/rustup-init.sh
+    state: absent
+  when: rust_downloaded is not skipped
+    and rust_installed is succeeded

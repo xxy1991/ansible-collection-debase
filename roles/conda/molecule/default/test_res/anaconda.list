@@ -1,0 +1,1 @@
+deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/anaconda.asc] https://repo.anaconda.com/pkgs/misc/debrepo/conda stable main

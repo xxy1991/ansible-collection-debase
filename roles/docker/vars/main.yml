@@ -1,0 +1,9 @@
+---
+# Docker options:
+docker:
+  install_compose: "{{ docker_install_compose | default(default.docker.install_compose) }}"
+  install_compose_version: "{{ docker_install_compose_version | default(default.docker.install_compose_version) }}"
+  install_compose_arch: "{{ docker_install_compose_arch | default(default.docker.install_compose_arch) }}"
+  install_compose_path: "{{ docker_install_compose_path | default(default.docker.install_compose_path) }}"
+  use_buildx: "{{ docker_use_buildx | default(default.docker.use_buildx) }}"
+  docker_users: []

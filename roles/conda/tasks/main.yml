@@ -1,0 +1,34 @@
+---
+# tasks file for ansible-role
+
+- name: Check system
+  assert:
+    that: ansible_distribution == 'Debian'
+      or ansible_distribution == 'Ubuntu'
+
+- name: "Add the anaconda key"
+  get_url:
+    url: "https://repo.anaconda.com/pkgs/misc/gpgkeys/anaconda.asc"
+    dest: /etc/apt/trusted.gpg.d/
+    mode: 0644
+    owner: root
+    group: root
+  register: anaconda_import_key
+  retries: 3
+  delay: 3
+  until: anaconda_import_key is succeeded
+
+- name: "Add anaconda repository into sources list"
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/anaconda.asc] \
+           https://repo.anaconda.com/pkgs/misc/debrepo/conda stable main"
+    state: present
+    filename: anaconda
+  register: anaconda_add_repository
+  when: anaconda_import_key is succeeded
+
+- name: "Install Miniconda"
+  ansible.builtin.package:
+    name: conda
+    state: present
+  when: anaconda_add_repository is succeeded

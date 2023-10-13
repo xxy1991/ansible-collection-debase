@@ -1,0 +1,23 @@
+---
+- name: Verify apt key
+  ansible.builtin.stat:
+    path: /etc/apt/trusted.gpg.d/google.asc
+    checksum_algorithm: sha256
+  register: apt_key
+  failed_when: "apt_key.stat.checksum != \
+    '5dfdccb6f67eea65aeb717f1ef90a81fa80fe77c60f4d3dfdf45c969748069c5'"
+
+- name: Verify apt repository
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list.d/google-chrome.list
+    checksum_algorithm: sha256
+  register: apt_repository
+  failed_when: "apt_repository.stat.checksum != \
+    '585b940fa7eea7bf7f84c7f105dc4e936a8715672fc796d7348f2cd2c3e4e026'"
+  when: false
+
+- name: Verify package
+  ansible.builtin.package:
+    name: google-chrome-stable
+    state: present
+  check_mode: true

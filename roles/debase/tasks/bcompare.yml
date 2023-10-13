@@ -1,0 +1,44 @@
+---
+- name: Check system
+  assert:
+    that: ansible_distribution == 'Debian'
+      or ansible_distribution == 'Ubuntu'
+
+- name: "Add scooter pub key"
+  get_url:
+    url: "https://www.scootersoftware.com/RPM-GPG-KEY-scootersoftware"
+    dest: /etc/apt/trusted.gpg.d/scooter.asc
+    mode: 0644
+    owner: root
+    group: root
+  when: software.scooter.bcompare
+  register: scooter_import_pub_key
+  retries: 3
+  delay: 3
+  until: scooter_import_pub_key is succeeded
+
+- name: "Add bcompare repository into sources list"
+  ansible.builtin.apt_repository:
+    repo: "deb https://www.scootersoftware.com/ bcompare4 non-free"
+    state: present
+    filename: scootersoftware
+  when: software.scooter.bcompare and scooter_import_pub_key is succeeded
+  register: bcompare_add_repository
+
+- name: "Install bcompare"
+  ansible.builtin.package:
+    name: bcompare
+    state: present
+  when: software.scooter.bcompare
+    and bcompare_add_repository is succeeded
+  register: bcompare_installed
+  retries: 3
+  delay: 3
+  until: bcompare_installed is succeeded
+
+- name: "Clean up"
+  ansible.builtin.file:
+    path: /etc/apt/trusted.gpg.d/scootersoftware-keyring.gpg
+    state: absent
+  when: bcompare_installed is succeeded
+  # changed_when: false

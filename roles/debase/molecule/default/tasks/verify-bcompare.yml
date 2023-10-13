@@ -1,0 +1,22 @@
+---
+- name: Verify apt key
+  ansible.builtin.stat:
+    path: /etc/apt/trusted.gpg.d/scooter.asc
+    checksum_algorithm: sha256
+  register: apt_key
+  failed_when: "apt_key.stat.checksum != \
+    '5720c88ebda50f266ef6c2e64d9e3d5c949db7e409a3571b9d3458dd0d1c5933'"
+
+- name: Verify apt repository
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list.d/scootersoftware.list
+    checksum_algorithm: sha256
+  register: apt_repository
+  failed_when: "apt_repository.stat.checksum != \
+    'b5b0451a7a502f8ae24626e286ff3de9557d705fc321dbc3e148fb121dfef79a'"
+
+- name: Verify code package
+  ansible.builtin.package:
+    name: bcompare
+    state: present
+  check_mode: true

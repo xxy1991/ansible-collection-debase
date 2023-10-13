@@ -1,0 +1,9 @@
+---
+- name: "Configure fs.inotify.max_user_watches"
+  vars:
+    max_user_watches: "{{ fs.inotify.max_user_watches }}"
+  ansible.builtin.template:
+    src: templates/etc/sysctl.d/99-fs-watches.conf.j2
+    dest: /etc/sysctl.d/99-fs-watches.conf
+    mode: 0644
+  when: fs.inotify.max_user_watches != 0

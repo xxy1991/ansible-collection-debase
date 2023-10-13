@@ -1,0 +1,7 @@
+---
+# Visual Studio Code default options
+default:
+  vscode:
+    install:
+      stable: true
+      insiders: false

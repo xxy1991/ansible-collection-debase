@@ -1,0 +1,6 @@
+---
+# Visual Studio Code options
+vscode:
+  install:
+    stable: "{{ vscode_install_stable | default(default.vscode.install.stable) }}"
+    insiders: "{{ vscode_install_insiders | default(default.vscode.install.insiders) }}"
