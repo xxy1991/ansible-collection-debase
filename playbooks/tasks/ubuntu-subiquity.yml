@@ -1,0 +1,47 @@
+---
+# This playbook hasn't completed.
+# The subiquity can't apply user-data in user-data
+# and the files of packages aren't clean.
+- name: Uninstall snap packages
+  ansible.builtin.shell: |
+    snap remove lxd
+    snap remove core18
+    snap remove snapd
+    rm -rf /root/snap
+    rm -rf /etc/systemd/system/snapd.service.d
+    rm -f /etc/xdg/autostart/snap-userd-autostart.desktop
+
+- name: Uninstall default packages
+  vars:
+    packages:
+      - [ snapd, lxd-agent-loader ]
+      - [ perl, bc, patch, git, gpg ]
+      - [ fonts-ubuntu-console, motd-news-config, sound-theme-freedesktop ]
+      - [ htop, at, gawk, tmux, screen ]
+      - [ upower, pollinate, thermald, apport, sosreport, lvm2, mdadm ]
+      - [ btrfs-progs, xfsprogs, overlayroot ]
+      - [ open-iscsi, multipath-tools ]
+      - [ libgpm2, python3-launchpadlib, python3-openssl ]
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ packages | flatten(levels=1) }}"
+
+- name: Uninstall autoremove packages
+  ansible.builtin.shell: |
+    apt-get -y autoremove
+    apt-get -y purge $(dpkg -l | grep '^rc' | awk '{print $2}')
+
+- name: purge package files
+  ansible.builtin.shell: |
+    rm -rf /etc/pollinate
+    rm -f /etc/crypttab
+
+- name: Install default packages
+  vars:
+    packages:
+      - [ tasksel unattended-upgrades pax ]
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ packages | flatten(levels=1) }}"

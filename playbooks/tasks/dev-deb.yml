@@ -1,0 +1,15 @@
+---
+- name: "Ensure comment novlan in /etc/network/interfaces"
+  ansible.builtin.lineinfile:
+    path: /etc/network/interfaces
+    regexp: "{{ item }}"
+    line: '# \1'
+    backrefs: true
+  loop:
+    - '(^allow-hotplug ens192)'
+    - '(^iface ens192 inet dhcp)'
+
+- name: Restart network
+  service:
+    name: networking
+    state: restarted
